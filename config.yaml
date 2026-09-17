@@ -1,0 +1,70 @@
+# Anomaly detection thresholds.
+#
+# Every threshold the detector uses lives here, so tuning is a config edit
+# rather than a code change. Rule names are stable identifiers: the API filter,
+# the UI and the tests all reference these exact strings.
+
+anomalies:
+
+  # Rule 1 -- resolution times far above normal FOR THEIR PRIORITY.
+  #
+  # Per-priority rather than global, because expected duration differs by
+  # priority: a global cutoff over-flags Low and under-flags Critical.
+  # IQR rather than mean + 3 sigma, because resolution_time_hrs is heavily
+  # right-skewed (mean 19.2 vs median 12.0) and a 3-sigma cutoff lands near 79h,
+  # catching almost nothing.
+  resolution_time_outlier:
+    enabled: true
+    iqr_multiplier: 1.5
+    # Below this many resolved tickets, a quartile spread is not meaningful and
+    # the group is skipped rather than given an unstable threshold.
+    min_group_size: 8
+    # Severity by how far past the threshold the value sits.
+    severity_ratios:
+      high: 2.0
+      medium: 1.5
+
+  # Rule 2 -- high-urgency work still open well past the age it should be.
+  #
+  # KNOWN LIMITATION: this dataset is a static Q1-2024 snapshot, so every
+  # unresolved High/Critical ticket is months old and all 80 of them trip this
+  # rule. On live data it would be a genuine alert; here it is effectively a
+  # backlog listing, which is why it is tiered by age and sorted oldest first.
+  unresolved_high_priority:
+    enabled: true
+    priorities: [Critical, High]
+    min_age_hours: 24
+    # Evaluated in order; the first tier whose age is met wins.
+    severity_tiers:
+      - hours: 168   # more than a week
+        severity: critical
+      - hours: 72    # more than three days
+        severity: high
+      - hours: 24
+        severity: medium
+
+  # Rule 3 -- first response slower than the target for that priority.
+  #
+  # ASSUMED THRESHOLDS. These are reasonable support-desk defaults invented for
+  # this assessment, not real customer SLA data. Low has no target by design.
+  response_sla_breach:
+    enabled: true
+    assumed_thresholds: true
+    thresholds_hours:
+      Critical: 1
+      High: 2
+      Medium: 4
+    severities:
+      Critical: high
+      High: medium
+      Medium: low
+
+  # Rule 4 -- resolved before the first response. Impossible by definition, so
+  # this is a data-quality flag with no false positives. These rows are also
+  # excluded from Rule 1's threshold maths so corrupt values cannot distort it.
+  data_integrity_contradiction:
+    enabled: true
+    severity: high
+
+# Ordering for display and for severity filtering.
+severity_order: [critical, high, medium, low]

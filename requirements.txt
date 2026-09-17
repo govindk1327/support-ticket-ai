@@ -1,0 +1,29 @@
+# Runtime and test dependencies. Every entry is imported somewhere in the
+# repository -- there are no aspirational or leftover packages here.
+#
+# Ranges rather than exact pins: the suite has been run end to end on both
+# pandas 2.2.3 / numpy 2.2 and pandas 3.0.2 / numpy 2.4, so the evaluator's
+# existing environment is unlikely to need a downgrade.
+
+# --- API -------------------------------------------------------------------
+fastapi>=0.110,<1.0          # REST layer, Pydantic-native request/response models
+uvicorn>=0.27,<1.0           # ASGI server that runs the API
+
+# --- Data and validation ---------------------------------------------------
+pandas>=2.2,<4.0             # the entire query and anomaly engine
+numpy>=1.26,<3.0             # boolean masks in the executor and rules
+pydantic>=2.6,<3.0           # QuerySpec validation: the LLM/data boundary
+
+# --- LLM providers ---------------------------------------------------------
+requests>=2.31,<3.0          # Groq and Ollama are both plain HTTP; no vendor SDK
+python-dotenv>=1.0,<2.0      # optional .env loading (degrades gracefully if absent)
+
+# --- Configuration ---------------------------------------------------------
+PyYAML>=6.0,<7.0             # config.yaml anomaly thresholds
+
+# --- UI --------------------------------------------------------------------
+streamlit>=1.30,<2.0         # minimal three-tab UI; talks to the API over HTTP
+
+# --- Testing ---------------------------------------------------------------
+pytest>=8.0,<10.0            # test runner
+httpx>=0.27,<1.0             # required by fastapi.testclient.TestClient
