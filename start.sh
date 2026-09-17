@@ -18,6 +18,12 @@ UI_PORT="${UI_PORT:-8501}"
 PYTHON="${PYTHON:-python3}"
 command -v "$PYTHON" >/dev/null 2>&1 || { echo "error: $PYTHON not found"; exit 1; }
 
+if ! "$PYTHON" -c 'import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)'; then
+  echo "error: Python 3.10 or newer is required (found: $("$PYTHON" --version 2>&1))"
+  echo "       recreate the venv with a newer interpreter, e.g. python3.12 -m venv .venv"
+  exit 1
+fi
+
 if [ ! -f "data/support_tickets.csv" ]; then
   echo "error: data/support_tickets.csv is missing"
   exit 1

@@ -32,6 +32,20 @@ if errorlevel 1 (
     exit /b 1
 )
 
+%PYTHON% -c "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)" >nul 2>&1
+if errorlevel 1 (
+    echo error: Python 3.10 or newer is required.
+    %PYTHON% --version
+    echo.
+    echo        Recreate the virtual environment with a newer interpreter:
+    echo          rmdir /s /q .venv
+    echo          py -3.12 -m venv .venv
+    echo          .venv\Scripts\activate
+    echo          pip install -r requirements.txt
+    pause
+    exit /b 1
+)
+
 if not exist "data\support_tickets.csv" (
     echo error: data\support_tickets.csv is missing.
     pause
@@ -51,7 +65,7 @@ REM Give the API a moment so the UI's first health call succeeds.
 timeout /t 5 /nobreak >nul
 
 echo Starting UI  -^> http://localhost:%UI_PORT%
-start "Support Ticket AI - UI" cmd /k set "API_URL=http://%API_HOST%:%API_PORT%" && %PYTHON% -m streamlit run ui/app.py --server.port %UI_PORT% --server.headless true --browser.gatherUsageStats false"
+start "Support Ticket AI - UI" cmd /k "set API_URL=http://%API_HOST%:%API_PORT% && %PYTHON% -m streamlit run ui/app.py --server.port %UI_PORT% --server.headless true --browser.gatherUsageStats false"
 
 echo.
 echo Both services are starting in separate windows.

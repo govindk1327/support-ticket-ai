@@ -3,6 +3,8 @@
 Natural-language querying and anomaly detection over a 500-row customer support
 ticket dataset.
 
+Built for the DOTMappers AI Engineer Assessment — End-to-End AI System Sprint.
+
 ---
 
 ## 1. Project overview
@@ -10,7 +12,7 @@ ticket dataset.
 Ask questions about the support tickets in plain English and get answers computed
 from the data, plus deterministic anomaly detection over the same dataset.
 
-The system does four things:
+The system does four things, matching the four requirements in the brief:
 
 | Requirement | How it is met |
 |---|---|
@@ -402,6 +404,10 @@ It is deliberately plain: the brief weights functionality at 30% and UI polish a
 
 ## 8. Setup
 
+> **Python 3.10 or newer is required.** The codebase uses `X | None` type
+> annotations (PEP 604). On 3.9 the app fails immediately with an explanatory
+> message. Check yours with `python --version` (Windows) or `python3 --version`.
+
 ### macOS / Linux
 
 ```bash
@@ -454,8 +460,19 @@ streamlit run ui/app.py                # terminal 2
 On Windows, set `API_URL` in the UI terminal first if you changed the API port:
 `$env:API_URL="http://127.0.0.1:8000"`.
 
-Requires Python 3.10+. Developed on 3.12; the suite passes on both
-pandas 2.2 / numpy 2.2 and pandas 3.0 / numpy 2.4.
+Developed on Python 3.12. The suite passes on both pandas 2.2 / numpy 2.2 and
+pandas 3.0 / numpy 2.4.
+
+If `python --version` reports 3.9 or older, recreate the environment with a
+newer interpreter — on Windows the `py` launcher makes this easy:
+
+```powershell
+deactivate                      # if the old venv is active
+Remove-Item -Recurse -Force .venv
+py -3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
 ---
 
@@ -554,6 +571,7 @@ code under test would pass even if the formula were wrong.
 
 ## 11. Limitations
 
+Stated plainly. None of these are hidden in the code.
 
 **Dataset is a historical snapshot.** Tickets run 2024-01-01 to 2024-03-30.
 Relative dates resolve against **2024-03-30**, not today. Anchoring to wall-clock
@@ -596,6 +614,7 @@ production-ready** and is not claimed to be.
 
 ## 12. What would change at scale
 
+Brief, since the brief asks about trade-offs:
 
 - **500 rows → 10M:** pandas moves to DuckDB or Postgres; the `QuerySpec` becomes
   a parameterised SQL builder. The IR and the validation boundary survive
