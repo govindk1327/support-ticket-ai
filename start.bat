@@ -65,7 +65,7 @@ REM Give the API a moment so the UI's first health call succeeds.
 timeout /t 5 /nobreak >nul
 
 echo Starting UI  -^> http://localhost:%UI_PORT%
-start "Support Ticket AI - UI" cmd /k "set API_URL=http://%API_HOST%:%API_PORT% && %PYTHON% -m streamlit run ui/app.py --server.port %UI_PORT% --server.headless true --browser.gatherUsageStats false"
+start "Support Ticket AI - UI" cmd /k set "API_URL=http://%API_HOST%:%API_PORT%" && %PYTHON% -m streamlit run ui/app.py --server.port %UI_PORT% --server.headless true --browser.gatherUsageStats false"
 
 echo.
 echo Both services are starting in separate windows.
