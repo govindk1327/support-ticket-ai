@@ -3,8 +3,6 @@
 Natural-language querying and anomaly detection over a 500-row customer support
 ticket dataset.
 
-Built for the DOTMappers AI Engineer Assessment — End-to-End AI System Sprint.
-
 ---
 
 ## 1. Project overview
@@ -571,7 +569,6 @@ code under test would pass even if the formula were wrong.
 
 ## 11. Limitations
 
-Stated plainly. None of these are hidden in the code.
 
 **Dataset is a historical snapshot.** Tickets run 2024-01-01 to 2024-03-30.
 Relative dates resolve against **2024-03-30**, not today. Anchoring to wall-clock
@@ -614,7 +611,6 @@ production-ready** and is not claimed to be.
 
 ## 12. What would change at scale
 
-Brief, since the brief asks about trade-offs:
 
 - **500 rows → 10M:** pandas moves to DuckDB or Postgres; the `QuerySpec` becomes
   a parameterised SQL builder. The IR and the validation boundary survive
